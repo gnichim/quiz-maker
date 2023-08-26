@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   Col,
   Row,
   ListGroup,
+  Form,
   Dropdown,
   Button,
   Container,
 } from 'react-bootstrap'
 
-const HomeScreen = ({ onSubmit }) => {
+const HomeScreen = () => {
   const navigate = useNavigate()
 
   const [data, setData] = useState([])
@@ -70,8 +71,10 @@ const HomeScreen = ({ onSubmit }) => {
   }
 
   const selectHandler = async () => {
+    console.log('selectHandler')
     try {
       setLoading(true)
+      console.log('categoryId: ', categoryId)
       const { data } = await axios.get(
         `https://opentdb.com/api.php?amount=5&category=${categoryId}&difficulty=${difficulty}&type=multiple`
       )
@@ -84,6 +87,8 @@ const HomeScreen = ({ onSubmit }) => {
           ...data.results[i].incorrect_answers,
           data.results[i].correct_answer,
         ]
+
+        console.log('quizzSelected: ', quizzSelected)
 
         // setAllAnswers(all_answers)
         // console.log('all_answers: ', all_answers)
@@ -98,6 +103,16 @@ const HomeScreen = ({ onSubmit }) => {
         //   a.push(ans)
         // })
       }
+      // console.log('a///: ', arr)
+
+      // const allll = [
+      //   all_answers,
+      //   all_answers,
+      //   all_answers,
+      //   all_answers,
+      //   all_answers,
+      // ]
+      // console.log('allll: ', allll)
     } catch (error) {
       console.error(error.message)
     }
@@ -105,40 +120,32 @@ const HomeScreen = ({ onSubmit }) => {
   }
   console.log('quizzSelected:*** ', quizzSelected)
 
-  const clickAnswer = (
-    id,
-    value,
-    question,
-    incorrect_answers,
-    correct_answer
-  ) => {
-    const foundedElement = selectedAnswer.find((elem) => elem.id === id)
-    // setSelectedAnswer([...selectedAnswer, { id, value: res }])
+  // const concat_answers = () => {
+  //   for (let i = 0; i <= allAnswers.length; i++) {
+  //     console.log('allAnswers+*+*+*: ', allAnswers)
+  //     // let b = [...allAnswers[i], allAnswers[i]]
+  //     // setA(b)
+  //   }
+  //   console.log('a: -*-*-* ', a)
+  // }
 
-    if (foundedElement) {
-      if (foundedElement.value === value) {
-        setSelectedAnswer([...selectedAnswer.filter((elem) => elem.id !== id)])
-      } else {
-        setSelectedAnswer([
-          ...selectedAnswer.filter((elem) => elem.id !== id),
-          { id, value, question, incorrect_answers, correct_answer },
-        ])
-      }
+  // concat_answers()
+
+  const clickAnswer = (id, res) => {
+    if (selectedAnswer.includes(res)) {
+      setSelectedAnswer(selectedAnswer.filter((a) => a !== res))
     } else {
-      setSelectedAnswer([
-        ...selectedAnswer,
-        { id, value, question, incorrect_answers, correct_answer },
-      ])
+      setSelectedAnswer([...selectedAnswer, res])
     }
-
-    // console.log('selectedAnswer: ', selectedAnswer)
-
+    console.log(
+      'selectedAnswer.filter((a) => a !== res): ',
+      selectedAnswer.filter((a) => a !== res)
+    )
     setCountClickedAnswers(countClickedAnswers + 1)
-    // console.log('countClickedAnswers: ', countClickedAnswers)
+    console.log('countClickedAnswers: ', countClickedAnswers)
   }
 
   const handleSubmit = () => {
-    onSubmit(selectedAnswer)
     navigate('/results')
   }
 
@@ -148,8 +155,26 @@ const HomeScreen = ({ onSubmit }) => {
         <Row>
           <Col className='text-center py-3'>
             <h1>QUIZ MAKER</h1>
-
+            {/* <Row>
+        {data.map((category) => (
+          <Col>
+            <h3>{category.name}</h3>
+          </Col>
+        ))}
+      </Row> */}
+            {/* <ListGroup.Item className='pt-5'> */}
             <Row className='pt-5'>
+              {/* <Col>
+            <Form.Control
+              as='select'
+              // value={qty}
+              // onChange={(e) => setQty(e.target.value)}
+            >
+              {data.map((x) => (
+                <option key={x.id - 9}>{x.name}</option>
+              ))}
+            </Form.Control>
+          </Col> */}
               <Col>
                 <Dropdown onSelect={handleCategory}>
                   <Dropdown.Toggle variant='success' id='categorySelect'>
@@ -193,45 +218,31 @@ const HomeScreen = ({ onSubmit }) => {
             </Row>
             {/* </ListGroup.Item> */}
             <Row className='pt-5'>
-              {quizzSelected?.map((quizz, index) => (
+              {quizzSelected?.map((res, index) => (
                 <div key={index}>
                   <p>
-                    {quizz.question}
+                    {res.question}
                     <br />
-                    {quizz.incorrect_answers?.map((inc_ans) => (
+                    {res.incorrect_answers?.map((res, index) => (
                       <Button
-                        key={inc_ans}
-                        onClick={() =>
-                          clickAnswer(
-                            index,
-                            inc_ans,
-                            quizz.question,
-                            quizz.incorrect_answers,
-                            quizz.correct_answer
-                          )
-                        }
+                        key={index}
+                        onClick={() => clickAnswer(index, res)}
                         variant={
-                          selectedAnswer.find(
-                            (elem) =>
-                              elem.id === index && elem.value === inc_ans
-                          )
-                            ? 'success'
-                            : 'light'
+                          selectedAnswer.includes(res) ? 'success' : 'light'
                         }
                         type='button'
                       >
-                        {inc_ans}
+                        {res}
                       </Button>
                     ))}
                   </p>
                 </div>
               ))}
-              {selectedAnswer.length === quizzSelected.length &&
-                quizzSelected.length > 0 && (
-                  <Button variant='info' type='button' onClick={handleSubmit}>
-                    Submit
-                  </Button>
-                )}
+              {countClickedAnswers >= 5 && (
+                <Button variant='info' type='button' onClick={handleSubmit}>
+                  Submit
+                </Button>
+              )}
             </Row>
           </Col>
         </Row>
