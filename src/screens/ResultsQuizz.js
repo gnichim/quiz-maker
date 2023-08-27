@@ -7,7 +7,7 @@ const ResultsQuizz = ({ data }) => {
 
   console.log('data***: ', data)
   const handleSubmit = () => {
-    navigate('/')
+    navigate('/quiz-maker')
   }
 
   const detectColor = (question, res) => {
