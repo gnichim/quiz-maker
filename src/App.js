@@ -13,7 +13,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route
-            path='/'
+            path='/quiz-maker'
             element={<HomeScreen onSubmit={setDataFromHome} />}
             exact
           />
