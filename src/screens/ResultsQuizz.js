@@ -55,7 +55,11 @@ const ResultsQuizz = ({ data }) => {
               {data?.map((question, index) => (
                 <div key={index}>
                   <p>
-                    {question.question}
+                    {/* {question.question} */}
+                    {/* {question.question.replace(/&quot;/g, '"')} */}
+                    <div
+                      dangerouslySetInnerHTML={{ __html: question.question }}
+                    ></div>
                     <br />
                     {question.incorrect_answers?.map((res) => (
                       <Button
@@ -64,7 +68,8 @@ const ResultsQuizz = ({ data }) => {
                         variant={detectColor(question, res)}
                         type='button'
                       >
-                        {res}
+                        {/* {res} */}
+                        <div dangerouslySetInnerHTML={{ __html: res }}></div>
                       </Button>
                     ))}
                   </p>

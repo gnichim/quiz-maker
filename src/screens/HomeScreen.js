@@ -196,7 +196,12 @@ const HomeScreen = ({ onSubmit }) => {
               {quizzSelected?.map((quizz, index) => (
                 <div key={index}>
                   <p>
-                    {quizz.question}
+                    {/* {quizz.question} */}
+                    {/* {quizz.question.replace(/&quot;/g, '"')} */}
+                    <div
+                      dangerouslySetInnerHTML={{ __html: quizz.question }}
+                    ></div>
+
                     <br />
                     {quizz.incorrect_answers?.map((inc_ans) => (
                       <Button
@@ -220,7 +225,10 @@ const HomeScreen = ({ onSubmit }) => {
                         }
                         type='button'
                       >
-                        {inc_ans}
+                        {/* {inc_ans} */}
+                        <div
+                          dangerouslySetInnerHTML={{ __html: inc_ans }}
+                        ></div>
                       </Button>
                     ))}
                   </p>
